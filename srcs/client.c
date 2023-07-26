@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ffreze <ffreze@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: ffreze <ffreze@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/25 13:02:21 by ffreze            #+#    #+#             */
-/*   Updated: 2023/07/26 14:17:01 by ffreze           ###   ########.fr       */
+/*   Updated: 2023/07/26 21:16:18 by ffreze           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,15 @@ void	send_byte(char byte, int pid)
 	{
 		g_tempo = 0;
 		if (byte >> j & 1)
-			kill(pid, SIGUSR2);
+		{
+			if (kill(pid, SIGUSR2) < 0)
+				exit(1);
+		}
 		else
-			kill(pid, SIGUSR1);
+		{
+			if (kill(pid, SIGUSR1) < 0)
+				exit(1);
+		}
 		j--;
 		while (g_tempo != 1)
 			usleep(10);

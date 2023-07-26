@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ffreze <ffreze@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: ffreze <ffreze@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 13:49:41 by ffreze            #+#    #+#             */
-/*   Updated: 2023/07/26 14:17:41 by ffreze           ###   ########.fr       */
+/*   Updated: 2023/07/26 21:18:27 by ffreze           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	g_info_client_pid;
 
-void	reset_info(int *info_octet, char *info_binaire)
+void	reset_info(int *info_octet, unsigned char *info_binaire)
 {
 	*info_octet = 0;
 	*info_binaire = 0;
@@ -24,7 +24,7 @@ void	reset_info(int *info_octet, char *info_binaire)
 void	handler(int sig, siginfo_t *info, void *ucontext)
 {
 	static int	info_octet = 0;
-	static char	info_binaire = 0;
+	static unsigned char	info_binaire = 0;
 
 	(void)ucontext;
 	if (sig == SIGUSR1)

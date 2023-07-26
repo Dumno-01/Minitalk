@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minitalk.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ffreze <ffreze@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: ffreze <ffreze@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/25 12:30:21 by ffreze            #+#    #+#             */
-/*   Updated: 2023/07/26 14:13:03 by ffreze           ###   ########.fr       */
+/*   Updated: 2023/07/26 21:18:37 by ffreze           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct s_info
 void	how_use_it(void);
 void	send_byte(char byte, int pid);
 void	send_txt(char *txt, int pid);
-void	reset_info(int *info_octet, char *info_binaire);
+void	reset_info(int *info_octet, unsigned char *info_binaire);
 void	handler(int sig, siginfo_t *info, void *ucontext);
 int		ft_atoi(const char *str);
 void	ft_putstr(char *str);
