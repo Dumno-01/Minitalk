@@ -3,47 +3,57 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ffreze <ffreze@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ffreze <ffreze@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 13:49:41 by ffreze            #+#    #+#             */
-/*   Updated: 2023/07/25 17:20:10 by ffreze           ###   ########.fr       */
+/*   Updated: 2023/07/26 14:17:41 by ffreze           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minitalk.h"
 
-t_info	c_info;
+int	g_info_client_pid;
 
-void	reset_info(void)
+void	reset_info(int *info_octet, char *info_binaire)
 {
-	c_info.octet = 0;
-	c_info.binaire = 0;
-	c_info.client_pid = 0;
+	*info_octet = 0;
+	*info_binaire = 0;
+	g_info_client_pid = 0;
 }
 
 void	handler(int sig, siginfo_t *info, void *ucontext)
 {
+	static int	info_octet = 0;
+	static char	info_binaire = 0;
+
 	(void)ucontext;
 	if (sig == SIGUSR1)
 		sig = 0;
 	if (sig == SIGUSR2)
 		sig = 1;
-	if (c_info.client_pid != info->si_pid)
-		reset_info();
-	c_info.binaire = c_info.binaire << 1 | sig;
-	c_info.octet++;
-	if (c_info.octet == 8)
+	if (g_info_client_pid != info->si_pid)
+		reset_info(&info_octet, &info_binaire);
+	info_binaire = info_binaire << 1 | sig;
+	info_octet++;
+	if (info_octet == 8 && info_binaire != 0)
 	{
-		write(1, &c_info.binaire, 1);
-		reset_info();
+		write(1, &info_binaire, 1);
+		reset_info(&info_octet, &info_binaire);
 	}
-	c_info.client_pid = info->si_pid;
+	else if (info_octet == 8 && info_binaire == 0)
+	{
+		write(1, "\n", 1);
+		kill(g_info_client_pid, SIGUSR2);
+		reset_info(&info_octet, &info_binaire);
+	}
+	g_info_client_pid = info->si_pid;
+	kill(g_info_client_pid, SIGUSR1);
 }
+
 int	main(void)
 {
 	struct sigaction	sa;
 
-	reset_info();
 	ft_putnbr(getpid());
 	ft_putstr("\n");
 	sa.sa_sigaction = &handler;
@@ -56,8 +66,3 @@ int	main(void)
 	while (1)
 		sleep(1);
 }
-// kill fonction qui envoie un signal
-// sigaction et les autres fonction permettent de dire au programme comment reagir en fonction du signal envoyé/reçu, 
-// (il permet d'avoir le pid du programme)
-// signal fait a peu près la meme chose, c'est la meme chose en plus simple mais moins precis
-// cas d'erreur : 2 client envoie un truc en meme temps, si pid est pas bon, le pid doit etre valid.
