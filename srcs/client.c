@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ffreze <ffreze@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ffreze <ffreze@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/25 13:02:21 by ffreze            #+#    #+#             */
-/*   Updated: 2023/07/26 21:16:18 by ffreze           ###   ########.fr       */
+/*   Updated: 2023/07/27 15:11:34 by ffreze           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	g_tempo;
 
-void	send_byte(char byte, int pid)
+static void	send_byte(char byte, int pid)
 {
 	int	j;
 
@@ -34,11 +34,15 @@ void	send_byte(char byte, int pid)
 		}
 		j--;
 		while (g_tempo != 1)
+		{
 			usleep(10);
+			if (kill(pid, 0) < 0)
+				exit(1);
+		}
 	}
 }
 
-void	send_txt(char *txt, int pid)
+static void	send_txt(char *txt, int pid)
 {
 	int	i;
 
@@ -48,7 +52,7 @@ void	send_txt(char *txt, int pid)
 	send_byte(0, pid);
 }
 
-void	listen_serv(int sig)
+static void	listen_serv(int sig)
 {
 	if (sig == SIGUSR1)
 		g_tempo = 1;
@@ -66,4 +70,3 @@ int	main(int argc, char **argv)
 	return (0);
 }
 
-// penser a les gestions d'erreur du pid nombre posstif

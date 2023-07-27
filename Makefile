@@ -3,13 +3,13 @@ NAME_CLIENT	=	client
 
 INCLUDES	=	includes/minitalk.h
 
-SRCS_CLIENT	=	srcs/client.c srcs/client_utils.c srcs/global_utils.c 
-SRCS_SERVER	=	srcs/server.c srcs/client_utils.c srcs/global_utils.c 
+SRCS_CLIENT	=	srcs/client.c srcs/client_utils.c srcs/global_utils.c srcs/ft_strjoin.c
+SRCS_SERVER	=	srcs/server.c srcs/client_utils.c srcs/global_utils.c srcs/ft_strjoin.c
 
 OBJS_CLIENT =	$(SRCS_CLIENT:.c=.o)
 OBJS_SERVER	=	$(SRCS_SERVER:.c=.o)
 
-CFLAGS		=	-Wall -Wextra -Werror
+CFLAGS		=	-Wall -Wextra -Werror -g3
 CC			=	gcc
 
 all: ${NAME_CLIENT} ${NAME_SERVER}

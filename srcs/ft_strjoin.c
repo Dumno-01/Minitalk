@@ -1,49 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   global_utils.c                                     :+:      :+:    :+:   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ffreze <ffreze@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/25 13:42:28 by ffreze            #+#    #+#             */
-/*   Updated: 2023/07/27 14:51:21 by ffreze           ###   ########.fr       */
+/*   Created: 2022/11/14 16:46:07 by ffreze            #+#    #+#             */
+/*   Updated: 2023/07/27 13:50:00 by ffreze           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minitalk.h"
 
-void	ft_putstr(char *str)
+static size_t	ft_strlen(const char	*s)
 {
-	while (*str)
-		write(1, str++, 1);
+	size_t	i;
+
+	i = 0;
+	while (s[i] != '\0')
+		i++;
+	return (i);
 }
 
-void	ft_putnbr(int n)
+char	*ft_strjoin(char *s1, char *s2)
 {
-	long	nbr;
-	char	c;
+	size_t	i;
+	size_t	j;
+	char	*join;
 
-	nbr = n;
-	if (nbr < 0)
+	i = 0;
+	j = 0;
+	join = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen((char *)s2) + 1));
+	if (!join)
+		return (free(s1), exit(1), NULL);
+	while (s1[i])
 	{
-		write(1, "-", 1);
-		nbr *= -1;
+		join[i] = s1[i];
+		i++;
 	}
-	if (nbr >= 10)
+	while (s2[j])
 	{
-		ft_putnbr(nbr / 10);
-		ft_putnbr(nbr % 10);
+		join[i] = s2[j];
+		i++;
+		j++;
 	}
-	else if (nbr < 10)
-	{
-		c = nbr + 48;
-		write(1, &c, 1);
-	}
-}
-
-void	ft_putstr_final(char *str)
-{
-	if (str)
-		ft_putstr(str);
-	write(1, "\n", 1);
+	join[i] = 0;
+	return (free(s1), free(s2), join);
 }

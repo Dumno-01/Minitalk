@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ffreze <ffreze@student.42.fr>              +#+  +:+       +#+        */
+/*   By: ffreze <ffreze@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 13:49:41 by ffreze            #+#    #+#             */
-/*   Updated: 2023/07/26 21:18:27 by ffreze           ###   ########.fr       */
+/*   Updated: 2023/07/27 14:53:21 by ffreze           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,46 @@
 
 int	g_info_client_pid;
 
-void	reset_info(int *info_octet, unsigned char *info_binaire)
+static void	create_str(unsigned char c, int index)
 {
-	*info_octet = 0;
-	*info_binaire = 0;
+	static char	*str;
+	char		*temp;
+
+	if (index == 1 && c)
+	{
+		if (!str)
+		{
+			str = malloc(sizeof(char) * 1);
+			if (!str)
+				exit(1);
+			*str = 0;
+		}
+		temp = malloc(sizeof(char) * 2);
+		if (!temp)
+			return (free(str), exit(1));
+		temp[0] = c;
+		temp[1] = 0;
+		str = ft_strjoin(str, temp);
+	}
+	else
+	{
+		ft_putstr_final(str);
+		free(str);
+		str = NULL;
+	}
+}
+
+static void	reset_info(int *info_byte, unsigned char *info_binary)
+{
+	*info_byte = 0;
+	*info_binary = 0;
 	g_info_client_pid = 0;
 }
 
-void	handler(int sig, siginfo_t *info, void *ucontext)
+static void	handler(int sig, siginfo_t *info, void *ucontext)
 {
-	static int	info_octet = 0;
-	static unsigned char	info_binaire = 0;
+	static int				info_byte = 0;
+	static unsigned char	info_binary = 0;
 
 	(void)ucontext;
 	if (sig == SIGUSR1)
@@ -32,19 +61,19 @@ void	handler(int sig, siginfo_t *info, void *ucontext)
 	if (sig == SIGUSR2)
 		sig = 1;
 	if (g_info_client_pid != info->si_pid)
-		reset_info(&info_octet, &info_binaire);
-	info_binaire = info_binaire << 1 | sig;
-	info_octet++;
-	if (info_octet == 8 && info_binaire != 0)
+		reset_info(&info_byte, &info_binary);
+	info_binary = info_binary << 1 | sig;
+	info_byte++;
+	if (info_byte == 8 && info_binary != 0)
 	{
-		write(1, &info_binaire, 1);
-		reset_info(&info_octet, &info_binaire);
+		create_str(info_binary, 1);
+		reset_info(&info_byte, &info_binary);
 	}
-	else if (info_octet == 8 && info_binaire == 0)
+	else if (info_byte == 8 && info_binary == 0)
 	{
-		write(1, "\n", 1);
+		create_str(info_binary, 2);
 		kill(g_info_client_pid, SIGUSR2);
-		reset_info(&info_octet, &info_binaire);
+		reset_info(&info_byte, &info_binary);
 	}
 	g_info_client_pid = info->si_pid;
 	kill(g_info_client_pid, SIGUSR1);
